@@ -91,7 +91,7 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     func setAlbum(_ album: YPAlbum) {
         title = album.title
         mediaManager.collection = album.collection
-        currentlySelectedIndex = 0
+        currentlySelectedIndex = YPConfig.library.preselectsFirstItem ? .some(0) : .none
         if !isMultipleSelectionEnabled {
             selectedItems.removeAll()
         }

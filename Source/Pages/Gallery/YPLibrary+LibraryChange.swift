@@ -59,7 +59,8 @@ extension YPLibraryVC: PHPhotoLibraryChangeObserver {
         // It can be when user add photos from limited permission.
         if self.mediaManager.hasResultItems,
            selectedItems.isEmpty,
-           let newAsset = self.mediaManager.getAsset(at: 0) {
+           let selectedIndex = currentlySelectedIndex,
+           let newAsset = self.mediaManager.getAsset(at: selectedIndex) {
             self.changeAsset(newAsset)
         }
 
