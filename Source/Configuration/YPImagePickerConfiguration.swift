@@ -80,6 +80,14 @@ public struct YPImagePickerConfiguration {
     /// Default value is `.photo`
     public var startOnScreen: YPPickerScreen = .photo
     
+    /// Determines whether the picker preview veiew is shown.
+    public var showsAssetPreview = false
+    
+    /// Determines whether a selecetion continues the picker flow.
+    /// * This automatically removes the "next" button navigation item.
+    /// * This overrides the ability to perform multiple selections.
+    public var continuesUponMediaSelection = true
+    
     /// Defines which screens are shown at launch, and their order.
     /// Default value is `[.library, .photo]`
     public var screens: [YPPickerScreen] = [.library, .photo]
@@ -202,6 +210,9 @@ public struct YPConfigLibrary {
 
     /// Initial state of multiple selection button.
     public var defaultMultipleSelection = false
+    
+    /// Selects the first item.
+    public var preselectsFirstItem = false
 
     /// Pre-selects the current item on setting multiple selection
     public var preSelectItemOnMultipleSelection = true

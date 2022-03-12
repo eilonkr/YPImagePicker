@@ -17,7 +17,7 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     internal var selectedItems = [YPLibrarySelection]()
     internal let mediaManager = LibraryMediaManager()
     internal var isMultipleSelectionEnabled = false
-    internal var currentlySelectedIndex: Int = 0
+    internal var currentlySelectedIndex: Int? = YPConfig.library.preselectsFirstItem ? .some(0) : .none
     internal let panGestureHelper = PanGestureHelper()
     internal var isInitialized = false
 
@@ -187,23 +187,25 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
 
         isMultipleSelectionEnabled.toggle()
 
-        if isMultipleSelectionEnabled {
-            let needPreselectItemsAndNotSelectedAnyYet = selectedItems.isEmpty && YPConfig.library.preSelectItemOnMultipleSelection
-            let shouldSelectByDelegate = delegate?.libraryViewShouldAddToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0), numSelections: selectedItems.count) ?? true
-            if needPreselectItemsAndNotSelectedAnyYet,
-               shouldSelectByDelegate,
-               let asset = mediaManager.getAsset(at: currentlySelectedIndex) {
-                selectedItems = [
-                    YPLibrarySelection(index: currentlySelectedIndex,
-                                       cropRect: v.currentCropRect(),
-                                       scrollViewContentOffset: v.assetZoomableView.contentOffset,
-                                       scrollViewZoomScale: v.assetZoomableView.zoomScale,
-                                       assetIdentifier: asset.localIdentifier)
-                ]
+        if let currentlySelectedIndex = currentlySelectedIndex {
+            if isMultipleSelectionEnabled {
+                let needPreselectItemsAndNotSelectedAnyYet = selectedItems.isEmpty && YPConfig.library.preSelectItemOnMultipleSelection
+                let shouldSelectByDelegate = delegate?.libraryViewShouldAddToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0), numSelections: selectedItems.count) ?? true
+                if needPreselectItemsAndNotSelectedAnyYet,
+                   shouldSelectByDelegate,
+                   let asset = mediaManager.getAsset(at: currentlySelectedIndex) {
+                    selectedItems = [
+                        YPLibrarySelection(index: currentlySelectedIndex,
+                                           cropRect: v.currentCropRect(),
+                                           scrollViewContentOffset: v.assetZoomableView.contentOffset,
+                                           scrollViewZoomScale: v.assetZoomableView.zoomScale,
+                                           assetIdentifier: asset.localIdentifier)
+                    ]
+                }
+            } else {
+                selectedItems.removeAll()
+                addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
             }
-        } else {
-            selectedItems.removeAll()
-            addToSelection(indexPath: IndexPath(row: currentlySelectedIndex, section: 0))
         }
         
         v.assetViewContainer.setMultipleSelectionMode(on: isMultipleSelectionEnabled)
@@ -238,7 +240,8 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
         }
         
         if mediaManager.hasResultItems,
-        let firstAsset = mediaManager.getAsset(at: 0) {
+        let currentlySelectedIndex = currentlySelectedIndex,
+        let firstAsset = mediaManager.getAsset(at: currentlySelectedIndex) {
             changeAsset(firstAsset)
             v.collectionView.reloadData()
             v.collectionView.selectItem(at: IndexPath(row: 0, section: 0),
@@ -294,6 +297,7 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
             if !isLowResIntermediaryImage {
                 self.v.hideLoader()
                 self.delegate?.libraryViewFinishedLoading()
+                self.delegate?.libraryViewDidUpdateSelection()
             }
         }
         
@@ -444,7 +448,7 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
                     ypLog("Error!")
                     return nil
                 }
-                return (asset, $0.cropRect)
+                return (asset, CGRect(x: 0, y: 0, width: 1.0, height: 1.0))
             }
             
             // Multiple selection

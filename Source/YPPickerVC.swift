@@ -276,15 +276,18 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         switch mode {
         case .library:
             setTitleViewWithTitle(aTitle: libraryVC?.title ?? "")
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
-                                                                style: .done,
-                                                                target: self,
-                                                                action: #selector(done))
-            navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
+            #warning("HERE")
+            if YPConfig.continuesUponMediaSelection == false {
+                navigationItem.rightBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.next,
+                                                                    style: .done,
+                                                                    target: self,
+                                                                    action: #selector(done))
+                navigationItem.rightBarButtonItem?.tintColor = YPConfig.colors.tintColor
 
-            // Disable Next Button until minNumberOfItems is reached.
-            navigationItem.rightBarButtonItem?.isEnabled =
-                libraryVC!.selectedItems.count >= YPConfig.library.minNumberOfItems
+                // Disable Next Button until minNumberOfItems is reached.
+                navigationItem.rightBarButtonItem?.isEnabled =
+                    libraryVC!.selectedItems.count >= YPConfig.library.minNumberOfItems
+            }
 
         case .camera:
             navigationItem.titleView = nil
@@ -359,6 +362,12 @@ extension YPPickerVC: YPLibraryViewDelegate {
             self.v.scrollView.isScrollEnabled = YPConfig.isScrollToChangeModesEnabled
             self.libraryVC?.v.hideLoader()
             self.updateUI()
+        }
+    }
+    
+    public func libraryViewDidUpdateSelection() {
+        if YPConfig.continuesUponMediaSelection, libraryVC?.selectedItems.isEmpty == false {
+            done()
         }
     }
     

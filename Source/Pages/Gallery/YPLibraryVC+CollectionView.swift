@@ -165,7 +165,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let previouslySelectedIndexPath = IndexPath(row: currentlySelectedIndex, section: 0)
+        let previouslySelectedIndexPath = IndexPath(row: currentlySelectedIndex ?? 0, section: 0)
         currentlySelectedIndex = indexPath.row
 
         changeAsset(mediaManager.getAsset(at: indexPath.row))
@@ -185,7 +185,7 @@ extension YPLibraryVC: UICollectionViewDelegate {
                     deselect(indexPath: indexPath)
                 }
             } else if isLimitExceeded == false {
-                addToSelection(indexPath: indexPath)
+                //addToSelection(indexPath: indexPath)
             }
             collectionView.reloadItems(at: [indexPath])
             collectionView.reloadItems(at: [previouslySelectedIndexPath])

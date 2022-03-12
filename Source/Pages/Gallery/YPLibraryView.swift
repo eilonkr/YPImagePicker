@@ -139,6 +139,10 @@ internal final class YPLibraryView: UIView {
     // MARK: Crop Rect
 
     func currentCropRect() -> CGRect {
+        guard YPConfig.showsAssetPreview else {
+            return .init(x: 0.0, y: 0.0, width: 1.0, height: 1.0)
+        }
+        
         let cropView = assetZoomableView
         let normalizedX = min(1, cropView.contentOffset.x &/ cropView.contentSize.width)
         let normalizedY = min(1, cropView.contentOffset.y &/ cropView.contentSize.height)
@@ -188,11 +192,15 @@ internal final class YPLibraryView: UIView {
         line.height(1)
         line.fillHorizontally()
 
-        assetViewContainer.top(0).fillHorizontally().heightEqualsWidth()
-        self.assetViewContainerConstraintTop = assetViewContainer.topConstraint
-        assetZoomableView.fillContainer().heightEqualsWidth()
-        assetZoomableView.Bottom == collectionView.Top
-        assetViewContainer.sendSubviewToBack(assetZoomableView)
+        if YPConfig.showsAssetPreview {
+            assetViewContainer.top(0).fillHorizontally().heightEqualsWidth()
+            self.assetViewContainerConstraintTop = assetViewContainer.topConstraint
+            assetZoomableView.fillContainer().heightEqualsWidth()
+            assetZoomableView.Bottom == collectionView.Top
+            assetViewContainer.sendSubviewToBack(assetZoomableView)
+        } else {
+            collectionView.top(0)
+        }
 
         progressView.height(5).fillHorizontally()
         progressView.Bottom == line.Top
