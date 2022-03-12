@@ -128,6 +128,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         cameraVC?.v.shotButton.isEnabled = true
         
         updateMode(with: currentController)
+        updateUI()
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -286,6 +287,8 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
                 // Disable Next Button until minNumberOfItems is reached.
                 navigationItem.rightBarButtonItem?.isEnabled =
                     libraryVC!.selectedItems.count >= YPConfig.library.minNumberOfItems
+            } else {
+                navigationItem.rightBarButtonItem = nil
             }
 
         case .camera:
