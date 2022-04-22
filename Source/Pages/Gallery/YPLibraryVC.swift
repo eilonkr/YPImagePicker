@@ -239,20 +239,32 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
             mediaManager.fetchResult = PHAsset.fetchAssets(with: options)
         }
         
-        if mediaManager.hasResultItems,
-        let currentlySelectedIndex = currentlySelectedIndex,
-        let firstAsset = mediaManager.getAsset(at: currentlySelectedIndex) {
-            changeAsset(firstAsset)
+        if mediaManager.hasResultItems {
             v.collectionView.reloadData()
-            v.collectionView.selectItem(at: IndexPath(row: 0, section: 0),
-                                        animated: false,
-                                        scrollPosition: UICollectionView.ScrollPosition())
+//            v.collectionView.selectItem(at: IndexPath(row: 0, section: 0),
+//                                        animated: false,
+//                                        scrollPosition: UICollectionView.ScrollPosition())
             if !isMultipleSelectionEnabled && YPConfig.library.preSelectItemOnMultipleSelection {
                 addToSelection(indexPath: IndexPath(row: 0, section: 0))
             }
         } else {
             delegate?.libraryViewHaveNoItems()
         }
+        
+//        if mediaManager.hasResultItems,
+//        let currentlySelectedIndex = currentlySelectedIndex,
+//        let firstAsset = mediaManager.getAsset(at: currentlySelectedIndex) {
+//            changeAsset(firstAsset)
+//            v.collectionView.reloadData()
+//            v.collectionView.selectItem(at: IndexPath(row: 0, section: 0),
+//                                        animated: false,
+//                                        scrollPosition: UICollectionView.ScrollPosition())
+//            if !isMultipleSelectionEnabled && YPConfig.library.preSelectItemOnMultipleSelection {
+//                addToSelection(indexPath: IndexPath(row: 0, section: 0))
+//            }
+//        } else {
+//            delegate?.libraryViewHaveNoItems()
+//        }
 
         scrollToTop()
     }
