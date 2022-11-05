@@ -67,12 +67,17 @@ open class YPImagePicker: UINavigationController {
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+        if #available(iOS 13, *) {
+            let scrollingAppearance = UINavigationBarAppearance()
+            scrollingAppearance.configureWithDefaultBackground()
+            navigationBar.scrollEdgeAppearance = scrollingAppearance
+        }
+        
         picker.didClose = { [weak self] in
             self?._didFinishPicking?([], true)
         }
         viewControllers = [picker]
         setupLoadingView()
-        navigationBar.isTranslucent = false
         navigationBar.tintColor = .ypLabel
         view.backgroundColor = .ypSystemBackground
 
